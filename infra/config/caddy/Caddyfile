@@ -18,3 +18,7 @@ http://n8n.home.arpa {
 http://grafana.home.arpa {
   reverse_proxy http://grafana:3000
 }
+
+http://influxdb.home.arpa {
+  reverse_proxy http://influxdb:8086
+}
