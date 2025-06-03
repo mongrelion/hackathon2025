@@ -1,0 +1,63 @@
+services:
+  lavinmq:
+    image: cloudamqp/lavinmq:latest
+    container_name: lavinmq
+    restart: unless-stopped
+
+    command: lavinmq -b 0.0.0.0 --guest-only-loopback=false --mqtt-bind=0.0.0.0
+
+    ports:
+      - 15672:15672 # HTTP
+      - 5672:5672 # AMQP
+
+    volumes:
+      - ${PWD}/data/lavinmq:/var/lib/lavinmq
+
+  nodered:
+    image: nodered/node-red
+    container_name: nodered
+    restart: unless-stopped
+
+    volumes:
+      - ${PWD}/data/nodered:/data
+
+    ports:
+      - 1880:1880
+
+  n8n:
+    image: n8nio/n8n
+    container_name: n8n
+    restart: unless-stopped
+
+    volumes:
+      - ${PWD}/data/n8n:/home/node/.n8n
+
+    ports:
+      - 5678:5678
+
+    environment:
+      - N8N_SECURE_COOKIE=false
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    restart: unless-stopped
+
+    volumes:
+      - ${PWD}/data/grafana:/var/lib/grafana
+
+    ports:
+      - 3000:3000
+
+  caddy:
+    image: caddy
+    container_name: caddy
+    restart: unless-stopped
+    command: caddy run --watch --config /etc/caddy/Caddyfile
+
+    volumes:
+      - ${PWD}/config/caddy:/etc/caddy
+
+    ports:
+      - 80:80
+      - 443:443
